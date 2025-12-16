@@ -1,18 +1,32 @@
-##DELAYS DISTRIBUTIO WITH 5 PARAMETERS.
+###########################################################################################
+# This code runs the delays distribution with 5 parameters such as: DATE ONSET SYMPTOMS,  # 
+# DATE ONSET SYMPTOMS, DATE REPORTING, DATE HOSPITALISATION, DATE RECOVERY.               # 
+#                                                                                         #        
+#                                                                                         #
+# Cite as:                                                                                #
+# Quijada M et al, Dengue Epidemiology and Transmission Intensity across Panama           #
+# during 2000-2024                                                                        #
+# Pre-print available at: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5461361%20  #
+#                                                                                         #
+# Description:                                                                            #
+# See README.md                                                                           #
+###########################################################################################
 
+
+**Load packages**
 library(writexl)
 library(readxl)
 library(tidyverse)
 library(dplyr)
 library(cowplot)
 library(ggpubr)
-library("fitdistrplus")
+library("fitdistrplus")  #allows to easily fit distributions.
 library(flexsurv)
 library("gridGraphics")
 library(boot)
 library(lubridate)
 
-theme_set(theme_classic())
+
 
 # Add data base
 DR <- readRDS("path/to/LineList_2000_24.rds") #Delay report
@@ -27,18 +41,18 @@ DR$`DATE RECOVERY` <- as.Date(DR$`DATE RECOVERY`, format = "%Y-%m-%d")
 
 
 # Subtract without filter
-DR$OSSC <-  as.numeric(DR$`DATE SAMPLE COLLECTION` - DR$`DATE ONSET SYMPTOMS`)
-DR$OSR <-  as.numeric(DR$`DATE REPORTING` - DR$`DATE ONSET SYMPTOMS`)
-DR$OSDH <-  as.numeric(DR$`DATE HOSPITALISATION` - DR$`DATE ONSET SYMPTOMS`)
-DR$OSDR <-  as.numeric(DR$`DATE RECOVERY` - DR$`DATE ONSET SYMPTOMS`)
-DR$HDR <-  as.numeric(DR$`DATE RECOVERY` - DR$`DATE HOSPITALISATION`)
+DR$OSSC <-  as.numeric(DR$`DATE SAMPLE COLLECTION` - DR$`DATE ONSET SYMPTOMS`) #Delay 1
+DR$OSR <-  as.numeric(DR$`DATE REPORTING` - DR$`DATE ONSET SYMPTOMS`) #Delay 2
+DR$OSDH <-  as.numeric(DR$`DATE HOSPITALISATION` - DR$`DATE ONSET SYMPTOMS`) #Delay 3
+DR$OSDR <-  as.numeric(DR$`DATE RECOVERY` - DR$`DATE ONSET SYMPTOMS`) #Delay 4
+DR$HDR <-  as.numeric(DR$`DATE RECOVERY` - DR$`DATE HOSPITALISATION`) #Delay 5
 
-# Group
+# Group the variables
 delay <- DR %>%
   dplyr::select(OSR, OSDH, OSSC, OSDR, HDR, Region, Sexo, EDAD)
 
 
-# Overview of the fitdistrplus package
+# Filter values between 0 to 20
 delay1 <- subset(delay, OSSC >= 0 & OSSC <= 20)
 delay2 <- subset(delay, OSR >= 0 & OSR <= 20)
 delay3 <- subset(delay, OSDH >= 0 & OSDH <= 20)
