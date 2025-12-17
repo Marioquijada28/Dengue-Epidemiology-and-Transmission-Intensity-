@@ -39,7 +39,6 @@ Hospitalised <- readRDS("path/to/Hospitalised.rds") #Hospitalised Cases
 # Convert wide age-band columns into long format
 # Each age-band becomes a category under "Age-group"
 # The corresponding case counts are placed in the "Cases" column
-
 Cases <- Cases %>%
   pivot_longer(cols = c(`0-9`, `10-19`, `20-29`, `30-39`, `40-49`, `50-59`, `60-69`, `70-79`, `over80`), 
                names_to = "Age-group", values_to = "Cases")
@@ -54,7 +53,6 @@ CasesT <- Cases %>%
 # Convert wide age-band columns into long format
 # Each age-band becomes a category under "Age-group"
 # The corresponding case counts are placed in the "Cases" column
-
 Pop <- Pop %>%
   pivot_longer(cols = c(`0-9`, `10-19`, `20-29`, `30-39`, `40-49`, `50-59`, `60-69`, `70-79`, `over80`), 
                names_to = "Age-group", values_to = "Pop")
