@@ -77,9 +77,9 @@ Location <- unique(temp$Region)
   
   #check convergence and quantiles for region-level parameters
   chains <- rstan::extract(stanfit)
-  rho <- apply(chains$rho, 2, function(x) quantile(x, c(0.5, 0.025, 0.975)))
-  gamma <- apply(chains$gamma, 2, function(x) quantile(x, c(0.5, 0.025, 0.975)))  
-  lam <- apply(chains$lam_H, 2, function(x) quantile(x, c(0.5, 0.025, 0.975)))  
+  rho <- quantile(chains$rho, c(0.5, 0.025, 0.975)))
+  gamma <- quantile(chains$gamma, c(0.5, 0.025, 0.975)))  
+  lam <- quantile(chains$lam_H, c(0.5, 0.025, 0.975)))  
   kids <- quantile(chains$kids, c(0.5, 0.025, 0.975))
 
   # Export parameter 
