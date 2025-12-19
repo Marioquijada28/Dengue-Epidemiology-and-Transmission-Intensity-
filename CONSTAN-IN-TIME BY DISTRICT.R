@@ -12,7 +12,6 @@
 
 # Before running: edit USER CONFIG (file paths, region_to_run, cmdstan dir, stan model path)
 
-
 #Libraries
 library(ggplot2)
 library(tidyr)
@@ -28,6 +27,66 @@ library(purrr)
 #Data-Read the .rds object
 temp <- readRDS("path/to/DengueCases.rds") #Dengue Cases by Region and District
 pop_mat <- readRDS("path/to/PopDistrict2000_24.rds") #Population by Region and District
+
+#Cases
+# Convert wide Year columns into long format
+# Each Year becomes a category under "Year"
+# The corresponding case counts are placed in the "Cases" column
+Casescolumn <- Cases %>%
+  pivot_longer(cols = matches("^\\d{4}$"),   # new column with the Year
+               names_to = "Year", values_to = "Cases",  # new column with the case counts
+               names_transform = list(Year = as.integer))  # <-- ensures Year is integer
+
+# Aggregate to Year x Age-group x Region x District
+Casescolumn <- Casescolumn %>%
+  group_by(`Age-group`, Year, Region, District ) %>%
+  summarise(Cases = sum(Cases),.groups = 'drop')
+
+# Average cases across years for each Region × District x Age-group
+#    (Mean over all years after the aggregation above)
+CasesT <- Casescolumn  %>%
+  group_by(`Age-group`, Region,  District) %>%
+  dplyr::summarize(Cases = mean(Cases, na.rm = TRUE))
+
+# Reshape to wide format:
+#Each Age-group becomes its own column
+temp <- CasesT %>%
+  pivot_wider(names_from = `Age-group`,
+              values_from = Cases)
+
+# Remove NOT region and District categories
+temp <- temp %>%
+  filter(!Region %in% c("DESCONOCI", "IMPORTADO", "EXTRANJERO", "SIN DEFINIR"))
+temp[is.na(temp)] <- 0 #Replace any remaining NA value
+
+temp <- temp %>%
+  filter(!District %in% c("Extranjero", "Desconocido", "Importado", "Missing", "N/A", "No Aplica"))
+
+
+
+#Population
+#    Reshape population data from wide (age columns) to long
+#    Each age group becomes a row instead of a column
+Pop <- Pop %>%
+  pivot_longer(cols = c("0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "over80"),
+               names_to = "Age-group", values_to = "Pop")
+
+#Aggregate population by Year × Age-group × Region x District
+Pop24 <- Pop %>%
+  group_by(`Age-group`, Year, Region,  District) %>%
+  summarise(Pop = sum(Pop)) %>%
+  ungroup()
+
+#Compute mean population across years for each District x Region × Age-group
+Popmean <- Pop24 %>%
+  group_by(`Age-group`, Region, District) %>%
+  summarise(Pop = as.integer(mean(Pop)),.groups = 'drop')
+
+# Convert long population table into wide format
+pop_mat <- Popmean %>%
+  pivot_wider(names_from = `Age-group`,
+              values_from = Pop) %>%
+  ungroup
 
 
 ##DENGUE INTENSITY
