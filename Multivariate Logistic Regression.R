@@ -77,7 +77,7 @@ IncModel <- tidy(IncidenceModel, exponentiate = TRUE, conf.int = TRUE) %>%
 dplyr::mutate(dplyr::across(where(is.numeric), ~ round(.x, 2)))
 
 # Save results
-write_xlsx(CasesModel, "~/path/to/your_file.xlsx")
+write_xlsx(IncModel, "~/path/to/your_file.xlsx")
 
 
 
