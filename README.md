@@ -1,6 +1,6 @@
 Please cite as: Quijada et. al.,Dengue Epidemiology and Transmission Intensity across Panama during 2000-2024
  
- Available as a pre-print (not peer-reviewed) at SSRN: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5461361%20
+ Available at Imperial: https://www.thelancet.com/journals/lanam/article/PIIS2667-193X(26)00101-8/fulltext
 
 
 # Repository structure
